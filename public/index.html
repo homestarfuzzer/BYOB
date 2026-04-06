@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BYOB — Break Your Own Boxes</title>
+  <title>BYOB: Break Your Own Boxes</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>" />
 </head>
@@ -26,15 +26,13 @@
       </div>
 
       <div class="nuke-wrap">
-        <button class="btn-nuke" id="nukeBtn">
-          ☠ NUKE
-        </button>
-        <div class="nuke-desc">Stop all · wipe everything · clean exit</div>
+        <button class="btn-nuke" id="nukeBtn">☠ NUKE</button>
+        <div class="nuke-desc">Stop & Wipe Everything & Clean Exit</div>
       </div>
     </div>
   </header>
 
-  <!-- ── Docker Setup Screen (shown if Docker not running) ────────────── -->
+  <!-- ── Docker Setup Screen ──────────────────────────────────────────── -->
   <div class="setup-screen" id="setupScreen" hidden>
     <div class="setup-card">
       <div class="setup-icon">🐳</div>
@@ -60,6 +58,27 @@
     </div>
   </div>
 
+  <!-- ── Post-NUKE: Shutdown Options Modal ─────────────────────────────── -->
+  <div class="modal-overlay" id="shutdownModal" hidden>
+    <div class="modal">
+      <div class="modal__icon" style="color:var(--green)">✓</div>
+      <h2 class="modal__title">Nuked.</h2>
+      <div class="modal__body">
+        <p>All containers removed. All images wiped. Network destroyed.</p>
+        <br>
+        <p style="font-size:0.82rem;color:var(--text-muted)">Want to stop Docker and close BYOB too?</p>
+      </div>
+      <div class="modal__actions" style="flex-direction:column;gap:0.5rem">
+        <button class="btn btn--danger" style="width:100%" onclick="shutdownEverything()">
+          Stop Docker & Close BYOB
+        </button>
+        <button class="btn btn--ghost" style="width:100%" onclick="closeShutdownModal()">
+          Keep Docker Running
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Pull Progress Modal ───────────────────────────────────────────── -->
   <div class="modal-overlay" id="pullModal" hidden>
     <div class="modal modal--pull">
@@ -76,6 +95,17 @@
 
   <!-- ── Main Dashboard ────────────────────────────────────────────────── -->
   <main class="main" id="mainContent">
+
+    <!-- Sort / Filter Bar -->
+    <div class="sort-bar" id="sortBar" hidden>
+      <span class="sort-bar__label">Sort by</span>
+      <div class="sort-bar__options">
+        <button class="sort-btn sort-btn--active" data-sort="difficulty" onclick="setSort('difficulty')">Difficulty</button>
+        <button class="sort-btn" data-sort="alpha" onclick="setSort('alpha')">A – Z</button>
+        <button class="sort-btn" data-sort="size" onclick="setSort('size')">Size</button>
+      </div>
+    </div>
+
     <div class="loading-state" id="loadingState">
       <div class="spinner"></div>
       <p>Connecting to Docker...</p>
