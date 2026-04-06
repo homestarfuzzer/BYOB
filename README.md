@@ -125,7 +125,7 @@ Restart BYOB & your lab appears in the dashboard.
 ## How it works
 
 ```
-Browser  ←──── Vanilla HTML/CSS/JS (no framework)
+Browser  ────→ Vanilla HTML/CSS/JS (no framework)
    │
    │  REST + SSE
    ▼
