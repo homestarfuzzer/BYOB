@@ -831,3 +831,85 @@ a:hover { text-decoration: underline; }
 
 /* ── Utility ─────────────────────────────────────────────────────────── */
 [hidden] { display: none !important; }
+
+/* ── Sort Bar ────────────────────────────────────────────────────────── */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.sort-bar__label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.sort-bar__options {
+  display: flex;
+  gap: 4px;
+}
+
+.sort-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.sort-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.sort-btn--active {
+  background: var(--surface-2);
+  border-color: var(--border-hover);
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ── Collapsible Category Sections ──────────────────────────────────── */
+.category-section__header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.category-section__header:hover .category-section__title {
+  color: var(--text);
+}
+
+.category-section__chevron {
+  font-size: 1rem;
+  color: var(--text-dim);
+  transition: transform var(--transition);
+  margin-left: 4px;
+  display: inline-block;
+}
+
+.category-section__chevron--collapsed {
+  transform: rotate(-90deg);
+}
+
+.category-section__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  overflow: hidden;
+  transition: opacity 180ms ease;
+}
+
+.category-section__grid--collapsed {
+  display: none;
+}
