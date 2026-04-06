@@ -1,0 +1,219 @@
+[
+  {
+    "id": "juice-shop",
+    "name": "OWASP Juice Shop",
+    "category": "Web",
+    "difficulty": "Beginner – Advanced",
+    "description": "The most complete insecure web app for security training. Covers the full OWASP Top 10 and beyond with 100+ challenges.",
+    "image": "bkimminich/juice-shop",
+    "imageSize": "~380 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 3000, "container": 3000 }],
+    "url": "http://localhost:3000",
+    "tags": ["OWASP Top 10", "XSS", "SQLi", "Auth", "API", "Broken Access"],
+    "resources": [
+      { "label": "Official Pwning Guide", "url": "https://pwning.owasp-juice.shop" },
+      { "label": "GitHub", "url": "https://github.com/juice-shop/juice-shop" }
+    ]
+  },
+  {
+    "id": "dvwa",
+    "name": "DVWA",
+    "category": "Web",
+    "difficulty": "Beginner – Intermediate",
+    "description": "Damn Vulnerable Web Application. Classic training ground for SQLi, XSS, file inclusion, command injection, and more — with adjustable difficulty.",
+    "image": "vulnerables/web-dvwa",
+    "imageSize": "~350 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8081, "container": 80 }],
+    "url": "http://localhost:8081",
+    "tags": ["SQLi", "XSS", "File Inclusion", "Command Injection", "CSRF"],
+    "resources": [
+      { "label": "DVWA Docs", "url": "https://github.com/digininja/DVWA" }
+    ]
+  },
+  {
+    "id": "webgoat",
+    "name": "WebGoat",
+    "category": "Web",
+    "difficulty": "Beginner – Intermediate",
+    "description": "OWASP's guided learning platform. Each lesson teaches a vulnerability concept with interactive exercises and hints — great for structured learning.",
+    "image": "webgoat/webgoat",
+    "imageSize": "~500 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8080, "container": 8080 }],
+    "url": "http://localhost:8080/WebGoat",
+    "tags": ["OWASP", "Guided", "XXE", "Deserialization", "JWT", "SQLi"],
+    "resources": [
+      { "label": "WebGoat GitHub", "url": "https://github.com/WebGoat/WebGoat" }
+    ]
+  },
+  {
+    "id": "bwapp",
+    "name": "bWAPP",
+    "category": "Web",
+    "difficulty": "Beginner – Intermediate",
+    "description": "Buggy Web Application — over 100 web vulnerabilities to practice. Covers HTML injection, SSRF, IDOR, clickjacking, and much more.",
+    "image": "raesene/bwapp",
+    "imageSize": "~300 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8082, "container": 80 }],
+    "url": "http://localhost:8082",
+    "tags": ["HTML Injection", "SSRF", "IDOR", "Clickjacking", "XXE"],
+    "resources": [
+      { "label": "bWAPP Site", "url": "http://www.itsecgames.com" }
+    ]
+  },
+  {
+    "id": "nodegoat",
+    "name": "OWASP NodeGoat",
+    "category": "Web",
+    "difficulty": "Intermediate",
+    "description": "Node.js web app built to be vulnerable. Demonstrates OWASP Top 10 risks in a modern JavaScript stack — ideal for JS devs learning security.",
+    "image": "owasp/nodegoat",
+    "imageSize": "~250 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 4000, "container": 4000 }],
+    "url": "http://localhost:4000",
+    "tags": ["Node.js", "NoSQLi", "OWASP Top 10", "Prototype Pollution"],
+    "resources": [
+      { "label": "NodeGoat GitHub", "url": "https://github.com/OWASP/NodeGoat" }
+    ]
+  },
+  {
+    "id": "dvga",
+    "name": "Damn Vulnerable GraphQL",
+    "category": "Web",
+    "difficulty": "Intermediate",
+    "description": "Purpose-built vulnerable GraphQL API. Practice introspection abuse, injection, batching attacks, and broken authorization in GraphQL endpoints.",
+    "image": "dolevf/dvga",
+    "imageSize": "~150 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 5013, "container": 5013 }],
+    "url": "http://localhost:5013",
+    "tags": ["GraphQL", "Introspection", "Injection", "Batching", "Auth"],
+    "resources": [
+      { "label": "DVGA GitHub", "url": "https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application" }
+    ]
+  },
+  {
+    "id": "altoro",
+    "name": "Altoro Mutual",
+    "category": "Web",
+    "difficulty": "Beginner",
+    "description": "IBM's demo vulnerable banking app. Classic SQLi, XSS, and broken access control in a realistic-looking finance application.",
+    "image": "ibmcom/altoro-mutual",
+    "imageSize": "~200 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8083, "container": 8080 }],
+    "url": "http://localhost:8083",
+    "tags": ["Banking", "SQLi", "XSS", "Broken Access", "Realistic"],
+    "resources": [
+      { "label": "Altoro Demo", "url": "http://demo.testfire.net" }
+    ]
+  },
+  {
+    "id": "crapi",
+    "name": "crAPI",
+    "category": "API",
+    "difficulty": "Intermediate",
+    "description": "Completely Ridiculous API — OWASP's API security training app. Covers BOLA, mass assignment, broken function-level auth, and the OWASP API Top 10.",
+    "image": "owasp/crapi",
+    "imageSize": "~600 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8888, "container": 8888 }],
+    "url": "http://localhost:8888",
+    "tags": ["OWASP API Top 10", "BOLA", "BFLA", "Mass Assignment", "REST"],
+    "resources": [
+      { "label": "crAPI GitHub", "url": "https://github.com/OWASP/crAPI" }
+    ]
+  },
+  {
+    "id": "vampi",
+    "name": "VAmPI",
+    "category": "API",
+    "difficulty": "Beginner – Intermediate",
+    "description": "Vulnerable API built with Flask and OpenAPI. Covers SQLi, user enumeration, mass assignment, and excessive data exposure in REST APIs.",
+    "image": "erev0s/vampi",
+    "imageSize": "~120 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 5000, "container": 5000 }],
+    "url": "http://localhost:5000",
+    "tags": ["REST API", "SQLi", "Mass Assignment", "OpenAPI", "Flask"],
+    "resources": [
+      { "label": "VAmPI GitHub", "url": "https://github.com/erev0s/VAmPI" }
+    ]
+  },
+  {
+    "id": "pixi",
+    "name": "Pixi",
+    "category": "API",
+    "difficulty": "Beginner",
+    "description": "42Crunch's intentionally vulnerable API. Good beginner target for API authentication bypass, BOLA, and information leakage.",
+    "image": "42crunch/pixi",
+    "imageSize": "~180 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8090, "container": 8090 }],
+    "url": "http://localhost:8090",
+    "tags": ["API Auth", "BOLA", "Info Leakage", "42Crunch"],
+    "resources": [
+      { "label": "Pixi GitHub", "url": "https://github.com/42Crunch/pi-ama" }
+    ]
+  },
+  {
+    "id": "metasploitable2",
+    "name": "Metasploitable 2",
+    "category": "Network",
+    "difficulty": "Beginner – Intermediate",
+    "description": "The classic vulnerable Linux box. ~20 exploitable services including FTP, SSH, Telnet, SMB, HTTP, and MySQL. The original practice target — pair it with the Attack Box.",
+    "image": "tleemcjr/metasploitable2",
+    "imageSize": "~1.2 GB",
+    "networkMode": "isolated",
+    "network": "cyberlab-net",
+    "ports": [],
+    "url": null,
+    "tags": ["FTP", "SSH", "Telnet", "SMB", "MySQL", "Metasploit", "Multi-service"],
+    "pairedWith": "attackbox",
+    "resources": [
+      { "label": "Rapid7 Guide", "url": "https://docs.rapid7.com/metasploit/metasploitable-2/" },
+      { "label": "Exploit Reference", "url": "https://www.vulnhub.com/entry/metasploitable-2,29/" }
+    ]
+  },
+  {
+    "id": "attackbox",
+    "name": "Attack Box",
+    "category": "Network",
+    "difficulty": "Tool",
+    "description": "Lightweight Kali-based attack container. Includes nmap, Metasploit, sqlmap, hydra, nikto, gobuster, and a browser terminal — ready to go against Metasploitable 2.",
+    "image": "byob-attackbox",
+    "imageSize": "~900 MB",
+    "buildLocal": true,
+    "networkMode": "isolated",
+    "network": "cyberlab-net",
+    "ports": [{ "host": 7681, "container": 7681 }],
+    "url": "http://localhost:7681",
+    "tags": ["nmap", "Metasploit", "sqlmap", "hydra", "nikto", "gobuster", "Terminal"],
+    "pairedWith": "metasploitable2",
+    "resources": [
+      { "label": "Metasploit Unleashed", "url": "https://www.offensive-security.com/metasploit-unleashed/" },
+      { "label": "nmap Reference", "url": "https://nmap.org/book/man.html" }
+    ]
+  },
+  {
+    "id": "ctfd",
+    "name": "CTFd",
+    "category": "CTF",
+    "difficulty": "Platform",
+    "description": "Run your own Capture The Flag competition. CTFd is the most popular open-source CTF platform — spin it up locally to host or practice with custom challenges.",
+    "image": "ctfd/ctfd",
+    "imageSize": "~200 MB",
+    "networkMode": "bridge",
+    "ports": [{ "host": 8000, "container": 8000 }],
+    "url": "http://localhost:8000",
+    "tags": ["CTF", "Platform", "Challenges", "Scoreboard"],
+    "resources": [
+      { "label": "CTFd Docs", "url": "https://docs.ctfd.io" },
+      { "label": "CTFd GitHub", "url": "https://github.com/CTFd/CTFd" }
+    ]
+  }
+]

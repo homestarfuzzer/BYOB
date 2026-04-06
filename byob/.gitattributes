@@ -1,0 +1,8 @@
+# Enforce LF line endings for shell scripts (important for WSL2 users)
+*.sh    text eol=lf
+*.bat   text eol=crlf
+*.json  text eol=lf
+*.js    text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.md    text eol=lf

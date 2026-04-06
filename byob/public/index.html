@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BYOB — Break Your Own Boxes</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>" />
+</head>
+<body>
+
+  <!-- ── Header / Nav ─────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header__brand">
+      <span class="header__skull">💀</span>
+      <div>
+        <div class="header__title">BYOB</div>
+        <div class="header__sub">Break Your Own Boxes</div>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <div class="header__status" id="dockerStatus">
+        <span class="status-dot status-dot--checking"></span>
+        <span>Checking Docker...</span>
+      </div>
+
+      <div class="nuke-wrap">
+        <button class="btn-nuke" id="nukeBtn">
+          ☠ NUKE
+        </button>
+        <div class="nuke-desc">Stop all · wipe everything · clean exit</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Docker Setup Screen (shown if Docker not running) ────────────── -->
+  <div class="setup-screen" id="setupScreen" hidden>
+    <div class="setup-card">
+      <div class="setup-icon">🐳</div>
+      <h2>Docker isn't running</h2>
+      <p id="setupMessage">BYOB needs Docker to spin up labs.</p>
+      <div class="setup-steps" id="setupSteps"></div>
+      <button class="btn btn--primary" id="setupCheckBtn" onclick="checkDocker()">
+        ↻ Check again
+      </button>
+    </div>
+  </div>
+
+  <!-- ── NUKE Confirmation Modal ───────────────────────────────────────── -->
+  <div class="modal-overlay" id="nukeModal" hidden>
+    <div class="modal">
+      <div class="modal__icon">☠</div>
+      <h2 class="modal__title">Nuke BYOB?</h2>
+      <div class="modal__body" id="nukeModalBody">Loading...</div>
+      <div class="modal__actions">
+        <button class="btn btn--danger" id="nukeConfirmBtn">Yes, nuke it</button>
+        <button class="btn btn--ghost" onclick="closeNukeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Pull Progress Modal ───────────────────────────────────────────── -->
+  <div class="modal-overlay" id="pullModal" hidden>
+    <div class="modal modal--pull">
+      <div class="modal__icon" id="pullModalIcon">⬇</div>
+      <h2 class="modal__title" id="pullModalTitle">Pulling image...</h2>
+      <div class="pull-progress">
+        <div class="pull-bar">
+          <div class="pull-bar__fill" id="pullBarFill"></div>
+        </div>
+        <div class="pull-log" id="pullLog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Dashboard ────────────────────────────────────────────────── -->
+  <main class="main" id="mainContent">
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Connecting to Docker...</p>
+    </div>
+    <div id="labsGrid"></div>
+  </main>
+
+  <!-- ── Toast Notifications ──────────────────────────────────────────── -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
