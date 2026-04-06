@@ -36,8 +36,7 @@ If Docker isn't installed, BYOB will detect it and show you the right install st
 ```bash
 git clone https://github.com/homestarfuzzer/BYOB.git
 cd BYOB
-npm install
-npm start
+npm install && npm start
 ```
 
 Open **http://localhost:1337** in your browser. That's it.
