@@ -1,9 +1,25 @@
 // app.js — BYOB: Break Your Own Boxes
-// Vanilla JS — no framework, no build step. Reads clearly so curious users can learn.
+// Vanilla JS — no framework, no build step.
 
 // ── State ──────────────────────────────────────────────────────────────
 let labs = []
-let pullingSources = {} // id → EventSource during active pulls
+let pullingSources = {}
+let currentSort = 'difficulty'
+
+// Difficulty order for sorting
+const DIFFICULTY_ORDER = {
+  'Beginner':                0,
+  'Beginner – Intermediate': 1,
+  'Beginner–Intermediate':   1,
+  'Intermediate':            2,
+  'Intermediate – Advanced': 3,
+  'Beginner – Advanced':     3,
+  'Advanced':                4,
+  'Platform':                5,
+  'Tool':                    5,
+}
+
+const NETWORK_NAME = 'cyberlab-net'
 
 // ── Boot ───────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +32,6 @@ async function checkDocker() {
   try {
     const res = await fetch('/api/docker/check')
     const data = await res.json()
-
     const statusEl = document.getElementById('dockerStatus')
 
     if (data.ok) {
@@ -34,7 +49,6 @@ async function checkDocker() {
       showSetupScreen(data)
     }
   } catch {
-    // Server might still be booting — retry
     setTimeout(checkDocker, 2000)
   }
 }
@@ -68,7 +82,6 @@ function getInstallInstructions(platform, installed) {
       macOS: Open <strong>Docker Desktop</strong> from Applications
     `
   }
-
   const guides = {
     linux: `
       <strong>Install Docker on Linux:</strong><br>
@@ -79,8 +92,7 @@ function getInstallInstructions(platform, installed) {
     mac: `
       <strong>Install Docker Desktop for macOS:</strong><br>
       <a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">→ Download Docker Desktop</a><br>
-      Or with Homebrew: <code>brew install --cask docker</code><br>
-      Then launch Docker Desktop from Applications.
+      Or with Homebrew: <code>brew install --cask docker</code>
     `,
     windows: `
       <strong>Install Docker Desktop for Windows:</strong><br>
@@ -104,11 +116,36 @@ async function loadLabs() {
     const res = await fetch('/api/labs')
     if (!res.ok) return
     labs = await res.json()
-    renderDashboard()
+    document.getElementById('sortBar').hidden = false
     document.getElementById('loadingState').hidden = true
-  } catch {
-    // Silently retry on next interval
-  }
+    renderDashboard()
+  } catch {}
+}
+
+// ── Sort ────────────────────────────────────────────────────────────────
+function setSort(type) {
+  currentSort = type
+  document.querySelectorAll('.sort-btn').forEach(b => {
+    b.classList.toggle('sort-btn--active', b.dataset.sort === type)
+  })
+  renderDashboard()
+}
+
+function sortedLabs(labList) {
+  return [...labList].sort((a, b) => {
+    if (currentSort === 'difficulty') {
+      const da = DIFFICULTY_ORDER[a.difficulty] ?? 3
+      const db = DIFFICULTY_ORDER[b.difficulty] ?? 3
+      return da !== db ? da - db : a.name.localeCompare(b.name)
+    }
+    if (currentSort === 'alpha') return a.name.localeCompare(b.name)
+    if (currentSort === 'size') {
+      const sa = parseFloat((a.imageSize || '0').replace(/[^0-9.]/g, '')) || 0
+      const sb = parseFloat((b.imageSize || '0').replace(/[^0-9.]/g, '')) || 0
+      return sa - sb
+    }
+    return 0
+  })
 }
 
 // ── Rendering ────────────────────────────────────────────────────────────
@@ -130,16 +167,35 @@ function renderDashboard() {
     if (!catLabs.length) continue
 
     const meta = categoryMeta[cat]
+    const sorted = sortedLabs(catLabs)
+
+    // Network category: split labs vs tools (attackbox is a tool, not a lab)
+    let countLabel
+    if (cat === 'Network') {
+      const labCount = catLabs.filter(l => l.id !== 'attackbox').length
+      const toolCount = catLabs.filter(l => l.id === 'attackbox').length
+      const parts = []
+      if (labCount) parts.push(`${labCount} Lab${labCount > 1 ? 's' : ''}`)
+      if (toolCount) parts.push(`${toolCount} Tool${toolCount > 1 ? 's' : ''}`)
+      countLabel = parts.join(' · ')
+    } else {
+      countLabel = `${catLabs.length} Lab${catLabs.length > 1 ? 's' : ''}`
+    }
+
+    // Check if this section is collapsed
+    const isCollapsed = localStorage.getItem(`byob-collapsed-${cat}`) === 'true'
+
     html += `
-      <section class="category-section">
-        <div class="category-section__header">
+      <section class="category-section" id="section-${cat}">
+        <div class="category-section__header" onclick="toggleSection('${cat}')">
           <span style="font-size:1rem">${meta.emoji}</span>
           <h2 class="category-section__title">${cat}</h2>
           <div class="category-section__line"></div>
-          <span class="category-section__count">${catLabs.length} lab${catLabs.length > 1 ? 's' : ''}</span>
+          <span class="category-section__count">${countLabel}</span>
+          <span class="category-section__chevron ${isCollapsed ? 'category-section__chevron--collapsed' : ''}">▾</span>
         </div>
-        <div class="category-section__grid">
-          ${catLabs.map(lab => renderLabCard(lab, meta)).join('')}
+        <div class="category-section__grid ${isCollapsed ? 'category-section__grid--collapsed' : ''}" id="grid-${cat}">
+          ${sorted.map(lab => renderLabCard(lab, meta)).join('')}
         </div>
       </section>
     `
@@ -148,6 +204,16 @@ function renderDashboard() {
   grid.innerHTML = html
 }
 
+// ── Collapsible sections ─────────────────────────────────────────────────
+function toggleSection(cat) {
+  const grid = document.getElementById(`grid-${cat}`)
+  const chevron = document.querySelector(`#section-${cat} .category-section__chevron`)
+  const isCollapsed = grid.classList.toggle('category-section__grid--collapsed')
+  chevron.classList.toggle('category-section__chevron--collapsed', isCollapsed)
+  localStorage.setItem(`byob-collapsed-${cat}`, isCollapsed)
+}
+
+// ── Lab Card ─────────────────────────────────────────────────────────────
 function renderLabCard(lab, meta) {
   const isRunning = lab.status === 'running'
   const isPulling = !!pullingSources[lab.id]
@@ -156,20 +222,11 @@ function renderLabCard(lab, meta) {
   if (isRunning) cardClass += ' lab-card--running'
   else if (isPulling) cardClass += ' lab-card--pulling'
 
-  // Status indicator
   let statusDot, statusText
-  if (isPulling) {
-    statusDot = 'pulling'
-    statusText = 'Pulling image...'
-  } else if (isRunning) {
-    statusDot = 'running'
-    statusText = 'Running'
-  } else {
-    statusDot = 'stopped'
-    statusText = 'Stopped'
-  }
+  if (isPulling)       { statusDot = 'pulling'; statusText = 'Pulling image...' }
+  else if (isRunning)  { statusDot = 'running'; statusText = 'Running' }
+  else                 { statusDot = 'stopped'; statusText = 'Stopped' }
 
-  // Size / cache line
   const sizeMeta = `
     <div class="lab-card__meta">
       ${lab.imageSize ? `<span>📦 ${lab.imageSize}</span>` : ''}
@@ -177,7 +234,6 @@ function renderLabCard(lab, meta) {
     </div>
   `
 
-  // Controls section — changes based on state
   let controls = ''
 
   if (isPulling) {
@@ -190,11 +246,9 @@ function renderLabCard(lab, meta) {
       </div>
     `
   } else if (isRunning) {
-    // Network lab (no URL — show IP block)
     if (lab.networkMode === 'isolated' && lab.id !== 'attackbox') {
       controls = renderNetworkControls(lab)
     } else if (lab.url) {
-      // Web/API lab — show link + stop
       controls = `
         <div class="lab-card__running-info">
           <div class="lab-card__url-row">
@@ -209,7 +263,6 @@ function renderLabCard(lab, meta) {
         </div>
       `
     } else {
-      // attackbox running — just show stop
       controls = `
         <div class="lab-card__running-info">
           <div class="lab-card__url-row">
@@ -223,18 +276,11 @@ function renderLabCard(lab, meta) {
       `
     }
   } else {
-    // Stopped
     const isAttackBox = lab.id === 'attackbox'
     const metaPartner = labs.find(l => l.id === lab.pairedWith)
     const partnerRunning = metaPartner?.status === 'running'
-
-    let startDisabled = false
-    let startTitle = ''
-
-    if (isAttackBox && !partnerRunning) {
-      startDisabled = true
-      startTitle = 'Start Metasploitable 2 first'
-    }
+    const startDisabled = isAttackBox && !partnerRunning
+    const startTitle = startDisabled ? 'Start Metasploitable 2 first' : ''
 
     controls = `
       <button
@@ -248,13 +294,10 @@ function renderLabCard(lab, meta) {
     `
   }
 
-  // Resource links
   const resources = lab.resources?.length ? `
     <div class="lab-card__resources">
       ${lab.resources.map(r => `
-        <a href="${r.url}" target="_blank" rel="noopener" class="resource-link">
-          ↗ ${r.label}
-        </a>
+        <a href="${r.url}" target="_blank" rel="noopener" class="resource-link">↗ ${r.label}</a>
       `).join('')}
     </div>
   ` : ''
@@ -268,20 +311,15 @@ function renderLabCard(lab, meta) {
           <span class="badge badge--difficulty">${lab.difficulty}</span>
         </div>
       </div>
-
       <p class="lab-card__desc">${lab.description}</p>
-
       <div class="lab-card__tags">
         ${lab.tags.map(t => `<span class="tag">${t}</span>`).join('')}
       </div>
-
       ${sizeMeta}
-
       <div class="lab-card__status lab-card__status--${statusDot}">
         <span class="pulse-dot pulse-dot--${statusDot}"></span>
         <span>${statusText}</span>
       </div>
-
       ${controls}
       ${resources}
     </div>
@@ -290,13 +328,12 @@ function renderLabCard(lab, meta) {
 
 function renderNetworkControls(lab) {
   const ip = lab.ip
-
   const attackBox = labs.find(l => l.id === 'attackbox')
   const attackRunning = attackBox?.status === 'running'
 
   return `
     <div class="lab-card__ip-block">
-      <div class="lab-card__ip-label">Target IP · ${NETWORK_NAME || 'cyberlab-net'}</div>
+      <div class="lab-card__ip-label">Target IP · ${NETWORK_NAME}</div>
       <div class="lab-card__ip-row">
         <span class="lab-card__ip-value ${ip ? '' : 'lab-card__ip-value--loading'}">
           ${ip || 'Assigning...'}
@@ -312,7 +349,7 @@ function renderNetworkControls(lab) {
     <div class="lab-card__controls" style="display:flex;gap:0.5rem;flex-wrap:wrap">
       <button class="btn btn--stop" onclick="stopLab('${lab.id}')">■ Stop</button>
       ${!attackRunning ? `
-        <button class="btn btn--attack" onclick="startLab('attackbox')" title="Start the Attack Box to hack this target">
+        <button class="btn btn--attack" onclick="startLab('attackbox')">
           ⚔ Launch Attack Box
         </button>
       ` : `
@@ -323,23 +360,16 @@ function renderNetworkControls(lab) {
   `
 }
 
-const NETWORK_NAME = 'cyberlab-net'
-
 // ── Actions ──────────────────────────────────────────────────────────────
 async function startLab(id) {
   const lab = labs.find(l => l.id === id)
   if (!lab) return
 
-  // If image not cached, pull first with SSE progress
   if (!lab.cached) {
     await pullImage(lab)
-    // After pull, check if we should bail (pull failed)
-    if (!labs.find(l => l.id === id)?.cached) {
-      await loadLabs() // refresh to get updated cached state
-    }
+    await loadLabs()
   }
 
-  // Start the container
   try {
     const res = await fetch(`/api/labs/${id}/start`, { method: 'POST' })
     const data = await res.json()
@@ -349,13 +379,8 @@ async function startLab(id) {
     } else {
       toast(`${lab.name} started`, 'success')
       await loadLabs()
-
-      // Auto-open the URL if there is one (short delay for container to boot)
-      if (lab.url) {
-        setTimeout(() => window.open(lab.url, '_blank'), 1500)
-      } else if (id === 'attackbox') {
-        setTimeout(() => window.open('http://localhost:7681', '_blank'), 2000)
-      }
+      if (lab.url) setTimeout(() => window.open(lab.url, '_blank'), 1500)
+      else if (id === 'attackbox') setTimeout(() => window.open('http://localhost:7681', '_blank'), 2000)
     }
   } catch {
     toast('Could not start lab — is Docker running?', 'error')
@@ -370,9 +395,8 @@ async function stopLab(id) {
     const res = await fetch(`/api/labs/${id}/stop`, { method: 'POST' })
     const data = await res.json()
 
-    if (!res.ok) {
-      toast(data.error || 'Could not stop lab', 'error')
-    } else {
+    if (!res.ok) toast(data.error || 'Could not stop lab', 'error')
+    else {
       toast(`${lab.name} stopped · image cached`, 'info')
       await loadLabs()
     }
@@ -384,20 +408,17 @@ async function stopLab(id) {
 // ── Pull Progress via SSE ─────────────────────────────────────────────────
 function pullImage(lab) {
   return new Promise((resolve) => {
-    // Show pull modal
     document.getElementById('pullModalTitle').textContent = `Pulling ${lab.name}...`
     document.getElementById('pullModalIcon').textContent = '⬇'
     document.getElementById('pullLog').innerHTML = ''
     document.getElementById('pullModal').hidden = false
 
     const logEl = document.getElementById('pullLog')
-
     const source = new EventSource(`/api/labs/${lab.id}/pull-progress`)
     pullingSources[lab.id] = source
 
     source.onmessage = (e) => {
       const data = JSON.parse(e.data)
-
       if (data.line) {
         const line = document.createElement('div')
         line.className = 'log-line'
@@ -405,27 +426,17 @@ function pullImage(lab) {
         logEl.appendChild(line)
         logEl.scrollTop = logEl.scrollHeight
       }
-
       if (data.done) {
         source.close()
         delete pullingSources[lab.id]
-        document.getElementById('pullModal').hidden = true
-
-        // Mark as cached optimistically before next poll
+        document.getElementById('pullModal').hidden = false
         lab.cached = true
         resolve()
       }
-
       if (data.error) {
         source.close()
         delete pullingSources[lab.id]
         document.getElementById('pullModal').hidden = true
-
-        const line = document.createElement('div')
-        line.className = 'log-line log-line--error'
-        line.textContent = data.error
-        logEl.appendChild(line)
-
         toast(data.error, 'error')
         resolve()
       }
@@ -455,7 +466,7 @@ async function copyIP(ip, labId) {
       }, 2000)
     }
   } catch {
-    toast('Copy failed — your browser may not support clipboard access', 'error')
+    toast('Copy failed — browser may not support clipboard access', 'error')
   }
 }
 
@@ -504,33 +515,64 @@ async function confirmNuke() {
     closeNukeModal()
 
     if (res.ok) {
-      toast('💀 Nuked. Everything gone. Fresh start.', 'success')
+      await loadLabs()
+      // Show post-nuke shutdown options
+      document.getElementById('shutdownModal').hidden = false
     } else {
       toast('Nuke incomplete — some items may remain', 'error')
     }
-
-    await loadLabs()
   } catch {
     closeNukeModal()
     toast('Nuke failed — try again', 'error')
   }
 }
 
+// ── Post-NUKE Shutdown ────────────────────────────────────────────────────
+function closeShutdownModal() {
+  document.getElementById('shutdownModal').hidden = true
+  toast('💀 Nuked. Everything gone. Fresh start.', 'success')
+}
+
+async function shutdownEverything() {
+  document.getElementById('shutdownModal').hidden = true
+  toast('Shutting down BYOB and Docker...', 'info')
+
+  try {
+    // Tell the server to shut down Docker and exit
+    await fetch('/api/shutdown', { method: 'POST' })
+  } catch {
+    // Expected — server is shutting down so the fetch will fail
+  }
+
+  // Show a clean goodbye screen and close the tab
+  document.body.innerHTML = `
+    <div style="
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      height:100vh;background:var(--bg);color:var(--text-muted);gap:1rem;font-family:var(--font)
+    ">
+      <div style="font-size:3rem">💀</div>
+      <div style="font-size:1.2rem;color:var(--text)">Session ended.</div>
+      <div style="font-size:0.85rem">Docker stopped. BYOB closed. Nothing left behind.</div>
+      <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.5rem">You can close this tab.</div>
+    </div>
+  `
+
+  // Attempt to close the tab (works if BYOB opened it)
+  setTimeout(() => window.close(), 2000)
+}
+
 // ── Toast Notifications ───────────────────────────────────────────────────
 function toast(message, type = 'info') {
   const icons = { success: '✓', error: '✗', info: 'ℹ' }
   const container = document.getElementById('toastContainer')
-
   const el = document.createElement('div')
   el.className = `toast toast--${type}`
   el.innerHTML = `<span>${icons[type]}</span> <span>${message}</span>`
-
   container.appendChild(el)
   setTimeout(() => el.remove(), 4000)
 }
 
-// ── Close modal on overlay click ──────────────────────────────────────────
+// ── Close modals on overlay click ─────────────────────────────────────────
 document.addEventListener('click', e => {
   if (e.target.id === 'nukeModal') closeNukeModal()
-  if (e.target.id === 'pullModal') {} // don't close pull modal by clicking overlay
 })
