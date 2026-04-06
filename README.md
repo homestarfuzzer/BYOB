@@ -1,6 +1,6 @@
-# 💀 BYOB — Break Your Own Boxes
+# BYOB: Break Your Own Boxes 🧱⛏️
 
-> One-click vulnerable lab launcher. No CLI required. No accounts. No cloud. Just hacking.
+#### ***A one-click vulnerable lab launcher. No CLI required. No accounts. No cloud. Just hacking.***
 
 ---
 
@@ -13,7 +13,7 @@
 
 ## What is BYOB?
 
-BYOB is a locally-hosted dashboard that lets you spin up intentionally vulnerable apps with a single click. Everything a beginner needs to practice web hacking, API security, network pentesting, and CTF skills — in one place, running locally, completely free.
+BYOB is a locally hosted dashboard that lets you spin up intentionally vulnerable apps with a single click. Everything a beginner needs to practice web hacking, API security, network pentesting, and CTF skills. All in one place, running locally, completely free!
 
 **Session model:** Start a lab → hack it → stop it (container vanishes, image cached for fast relaunch) → NUKE when done (everything wiped, nothing left behind).
 
@@ -34,8 +34,8 @@ If Docker isn't installed, BYOB will detect it and show you the right install st
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/byob.git
-cd byob
+git clone https://github.com/homestarfuzzer/BYOB.git
+cd BYOB
 npm install
 npm start
 ```
@@ -118,7 +118,7 @@ Edit `labs/labs.json`. No code changes needed.
 }
 ```
 
-Restart BYOB — your lab appears in the dashboard.
+Restart BYOB & your lab appears in the dashboard.
 
 ---
 
@@ -146,13 +146,13 @@ No database. State is derived live from `docker ps`. Container logs don't persis
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-Adding a new lab is the easiest contribution — just a `labs.json` entry and a PR.
+Adding a new lab is the easiest contribution, it's just a `labs.json` entry and a PR.
 
 ---
 
 ## License
 
-MIT — free to use, modify, and share.
+MIT: free to use, modify, and share.
 
 ---
 
