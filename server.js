@@ -370,3 +370,32 @@ async function main() {
 }
 
 main()
+
+// POST /api/shutdown — gracefully stop Docker and exit the BYOB server
+// Called after NUKE when user wants a full clean exit
+app.post('/api/shutdown', async (req, res) => {
+  res.json({ ok: true })
+
+  // Small delay so the response makes it back to the browser
+  setTimeout(async () => {
+    console.log('\n  💀 BYOB shutting down...')
+
+    // Stop the Docker daemon if we can (platform-specific)
+    const platform = process.platform
+    try {
+      if (platform === 'linux') {
+        await execa('sudo', ['systemctl', 'stop', 'docker']).catch(() => {
+          // May not have sudo — try without
+          execa('systemctl', ['stop', 'docker']).catch(() => {})
+        })
+      } else if (platform === 'darwin') {
+        // Docker Desktop on Mac
+        await execa('osascript', ['-e', 'quit app "Docker"']).catch(() => {})
+      }
+      // Windows: Docker Desktop is a GUI app — just exit BYOB and let user close it
+    } catch {}
+
+    console.log('  Goodbye.\n')
+    process.exit(0)
+  }, 300)
+})
