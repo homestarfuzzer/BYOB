@@ -82,6 +82,7 @@
   <!-- ── Pull Progress Modal ───────────────────────────────────────────── -->
   <div class="modal-overlay" id="pullModal" hidden>
     <div class="modal modal--pull">
+      <button class="pull-modal__dismiss" id="pullModalDismiss" onclick="dismissPullModal()">✕</button>
       <div class="modal__icon" id="pullModalIcon">⬇</div>
       <h2 class="modal__title" id="pullModalTitle">Pulling image...</h2>
       <div class="pull-progress">
@@ -103,6 +104,7 @@
         <button class="sort-btn sort-btn--active" data-sort="difficulty" onclick="setSort('difficulty')">Difficulty</button>
         <button class="sort-btn" data-sort="alpha" onclick="setSort('alpha')">A – Z</button>
         <button class="sort-btn" data-sort="size" onclick="setSort('size')">Size</button>
+        <button class="sort-btn" data-sort="active" onclick="setSort('active')">Active</button>
       </div>
     </div>
 

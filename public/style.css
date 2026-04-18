@@ -103,7 +103,7 @@ a:hover { text-decoration: underline; }
 .header__right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2.5rem;
 }
 
 .header__status {
@@ -136,6 +136,8 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   align-items: flex-end;
   gap: 2px;
+  border-left: 1px solid var(--border);
+  padding-left: 2.5rem;
 }
 
 .btn-nuke {
@@ -753,7 +755,23 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 8px 48px rgba(0, 0, 0, 0.7);
 }
 
-.modal--pull { max-width: 520px; }
+.modal--pull { max-width: 520px; position: relative; }
+
+.pull-modal__dismiss {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition);
+  line-height: 1;
+}
+.pull-modal__dismiss:hover { color: var(--text); }
 
 .modal__icon {
   font-size: 2rem;

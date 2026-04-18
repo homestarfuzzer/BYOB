@@ -218,24 +218,23 @@ byob/
 | `dvwa` | DVWA | `vulnerables/web-dvwa` | 8081 | ~350 MB |
 | `webgoat` | WebGoat | `webgoat/webgoat` | 8080 | ~500 MB |
 | `bwapp` | bWAPP | `raesene/bwapp` | 8082 | ~300 MB |
-| `nodegoat` | OWASP NodeGoat | `owasp/nodegoat` | 4000 | ~250 MB |
+| `dvna` | DVNA | `appsecco/dvna` | 9090 | ~300 MB |
 | `dvga` | Damn Vulnerable GraphQL | `dolevf/dvga` | 5013 | ~150 MB |
-| `altoro` | Altoro Mutual | `ibmcom/altoro-mutual` | 8083 | ~200 MB |
+| `altoro` | Altoro Mutual | `eystsen/altoro` | 8083 | ~230 MB |
+| `mutillidae` | OWASP Mutillidae II | `webpwnized/mutillidae` | 8084 | ~210 MB |
 
 ### API Security
 | ID | Name | Image | Host Port | Est. Size |
 |----|------|-------|-----------|-----------|
-| `crapi` | crAPI | `owasp/crapi` | 8888 | ~600 MB |
 | `vampi` | VAmPI | `erev0s/vampi` | 5000 | ~120 MB |
-| `pixi` | Pixi (42Crunch) | `42crunch/pixi` | 8090 | ~180 MB |
 
 ### Lab Environment
 | ID | Name | Est. Size | Notes |
 |----|------|-----------|-------|
 | `metasploitable2` | Metasploitable 2 | ~1.2 GB | Isolated on `cyberlab-net` |
-| `attackbox` | Attack Box | ~900 MB | Custom Kali; pairs with Metasploitable |
 
 > **Adding a lab = editing `labs/labs.json` only.** No code changes needed.
+> **Before adding:** `docker pull <image>` must succeed without auth. See README for the full checklist.
 
 ---
 
@@ -249,19 +248,6 @@ docker network create --driver bridge --subnet 172.20.0.0/24 cyberlab-net
 
 ### Why isolated?
 Metasploitable 2 exposes ~20 services. Mapping them all to host ports is messy and potentially exposes them on the user's LAN. Instead, the container lives entirely on `cyberlab-net` — reachable from other containers on that network but invisible to the outside world.
-
-### Attack Box (Lightweight Kali)
-Custom `Dockerfile` at `containers/attackbox/Dockerfile`. Based on `kalilinux/kali-rolling` (base image only) with a curated toolset:
-
-**Installed tools:** `nmap`, `metasploit-framework`, `sqlmap`, `hydra`, `nikto`, `gobuster`, `dirb`, `curl`, `wget`, `python3`, `ttyd`
-
-**Target size: ~900 MB** (vs 4 GB+ for full Kali). Shown on card before first pull.
-
-When running:
-- `ttyd` serves a terminal on `localhost:7681`
-- Dashboard opens it automatically in a new tab
-- `/etc/hosts` inside container: `target` → Metasploitable 2's `cyberlab-net` IP
-- User types `nmap target` immediately — no config, no IP lookup needed
 
 ---
 

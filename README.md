@@ -54,38 +54,33 @@ Open **http://localhost:1337** in your browser. That's it.
 | DVWA | SQLi, XSS, File Inclusion, Command Injection | ~350 MB |
 | WebGoat | Guided lessons, XXE, Deserialization, JWT | ~500 MB |
 | bWAPP | SSRF, IDOR, Clickjacking, 100+ vulns | ~300 MB |
-| OWASP NodeGoat | Node.js stack, Prototype Pollution | ~250 MB |
+| DVNA | Node.js/Express, OWASP Top 10, SSRF, Injection | ~300 MB |
 | Damn Vulnerable GraphQL | GraphQL introspection, injection, batching | ~150 MB |
-| Altoro Mutual | Realistic banking app, SQLi, XSS | ~200 MB |
+| Altoro Mutual | Realistic banking app, SQLi, XSS | ~230 MB |
+| OWASP Mutillidae II | 100+ exercises, OWASP Top 10, LDAP, Clickjacking | ~210 MB |
 
 ### API Security Labs
 | Lab | Skills | Size |
 |-----|--------|------|
-| crAPI | OWASP API Top 10, BOLA, BFLA | ~600 MB |
 | VAmPI | REST API, Mass Assignment, OpenAPI | ~120 MB |
-| Pixi | API Auth bypass, BOLA | ~180 MB |
 
 ### Lab Environment
 | Lab | Skills | Size |
 |-----|--------|------|
 | Metasploitable 2 | Multi-service exploitation, Metasploit | ~1.2 GB |
-| Attack Box | Pre-built Kali attack toolkit (see below) | ~900 MB |
 
-> **Disk note:** Running everything at once is roughly 5 GB. Images are downloaded once and cached.
+> **Disk note:** Running everything at once is roughly 4 GB. Images are downloaded once and cached.
 > NUKE wipes all images and frees that space instantly.
 
 ---
 
-## The Metasploitable 2 + Attack Box Pair
+## Metasploitable 2
 
-These two labs work together on an **isolated Docker network** (`cyberlab-net`):
+Metasploitable 2 runs on an **isolated Docker network** (`cyberlab-net`) — it has no host-accessible ports, so it can't reach your LAN. The dashboard shows its assigned IP once running.
 
-- **Metasploitable 2** — the target. Over 20 exploitable services (FTP, SSH, Telnet, HTTP, MySQL, and more).
-- **Attack Box** — a lightweight Kali container (~900 MB) with: `nmap`, `metasploit`, `sqlmap`, `hydra`, `nikto`, `gobuster`, and a browser-based terminal.
+Use your host tools to attack it: `nmap`, `msfconsole`, `sqlmap`, etc.
 
-Start Metasploitable 2 → dashboard shows the target IP → click **Launch Attack Box** → browser terminal opens → type `nmap target` and go.
-
-Everything is isolated from your real LAN. Safe to run anywhere.
+> **Note:** In the Docker version, some services run on non-standard ports (FTP on 2121, not 21). SSH and Telnet are not available in this image.
 
 ---
 
@@ -113,6 +108,16 @@ Edit `labs/labs.json`. No code changes needed.
 ```
 
 Restart BYOB and your lab appears in the dashboard.
+
+**Before submitting a new lab, verify all of the following:**
+
+- [ ] `docker pull <image>` succeeds without authentication
+- [ ] `docker run -d -p 127.0.0.1:<host>:<container> <image>` starts the container
+- [ ] The app is accessible at `http://localhost:<host>` within 60 seconds
+- [ ] The host port doesn't conflict with an existing lab (see port column in the tables above)
+- [ ] `networkMode` is `"bridge"` for standard labs — `"isolated"` only for services that need to be hidden from the host
+- [ ] Description leads with what the student *practices*, not just what the app is
+- [ ] No account creation, registration, or manual setup required on first load
 
 ---
 

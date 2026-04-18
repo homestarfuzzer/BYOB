@@ -53,31 +53,31 @@
     "name": "bWAPP",
     "category": "Web",
     "difficulty": "Beginner – Intermediate",
-    "description": "Buggy Web Application with over 100 web vulnerabilities to practice. Covers HTML injection, SSRF, IDOR, clickjacking, and more.",
+    "description": "Buggy Web Application with over 100 web vulnerabilities to practice. Covers HTML injection, SSRF, IDOR, clickjacking, and more. On first run, click Install/Reset DB at the setup page — then log in at /login.php (default: bee / bug).",
     "image": "raesene/bwapp",
     "imageSize": "~300 MB",
     "networkMode": "bridge",
     "ports": [{ "host": 8082, "container": 80 }],
-    "url": "http://localhost:8082",
+    "url": "http://localhost:8082/install.php",
     "tags": ["HTML Injection", "SSRF", "IDOR", "Clickjacking", "XXE"],
     "resources": [
       { "label": "bWAPP Site", "url": "http://www.itsecgames.com" }
     ]
   },
   {
-    "id": "nodegoat",
-    "name": "OWASP NodeGoat",
+    "id": "dvna",
+    "name": "DVNA",
     "category": "Web",
     "difficulty": "Intermediate",
-    "description": "A Node.js app built to be vulnerable. Demonstrates OWASP Top 10 risks in a modern JavaScript stack, ideal for developers learning security.",
-    "image": "owasp/nodegoat",
-    "imageSize": "~250 MB",
+    "description": "Damn Vulnerable Node Application. A deliberately insecure Node.js/Express app demonstrating OWASP Top 10 risks in a modern JavaScript stack. Covers injection, broken auth, SSRF, and more.",
+    "image": "appsecco/dvna",
+    "imageSize": "~300 MB",
     "networkMode": "bridge",
-    "ports": [{ "host": 4000, "container": 4000 }],
-    "url": "http://localhost:4000",
-    "tags": ["Node.js", "NoSQLi", "OWASP Top 10", "Prototype Pollution"],
+    "ports": [{ "host": 9090, "container": 9090 }],
+    "url": "http://localhost:9090",
+    "tags": ["Node.js", "Express", "OWASP Top 10", "SSRF", "Injection", "Broken Auth"],
     "resources": [
-      { "label": "NodeGoat GitHub", "url": "https://github.com/OWASP/NodeGoat" }
+      { "label": "DVNA GitHub", "url": "https://github.com/appsecco/dvna" }
     ]
   },
   {
@@ -85,7 +85,7 @@
     "name": "Damn Vulnerable GraphQL",
     "category": "Web",
     "difficulty": "Intermediate",
-    "description": "Purpose-built vulnerable GraphQL API. Practice introspection abuse, injection, batching attacks, and broken authorization in GraphQL endpoints.",
+    "description": "Purpose-built vulnerable GraphQL API. Practice introspection abuse, injection, batching attacks, and broken authorization in GraphQL endpoints. Note: the playground may take 30–60 seconds to become available after starting.",
     "image": "dolevf/dvga",
     "imageSize": "~150 MB",
     "networkMode": "bridge",
@@ -101,31 +101,31 @@
     "name": "Altoro Mutual",
     "category": "Web",
     "difficulty": "Beginner",
-    "description": "IBM's demo vulnerable banking app. A realistic finance application with classic SQLi, XSS, and broken access control to exploit.",
-    "image": "ibmcom/altoro-mutual",
-    "imageSize": "~200 MB",
+    "description": "A realistic vulnerable banking app (community AltoroJ fork). Finance-themed with classic SQLi, XSS, broken access control, and insecure session management.",
+    "image": "eystsen/altoro",
+    "imageSize": "~230 MB",
     "networkMode": "bridge",
     "ports": [{ "host": 8083, "container": 8080 }],
     "url": "http://localhost:8083",
     "tags": ["Banking", "SQLi", "XSS", "Broken Access", "Realistic"],
     "resources": [
-      { "label": "Altoro Demo", "url": "http://demo.testfire.net" }
+      { "label": "AltoroJ GitHub", "url": "https://github.com/HCL-TECH-SOFTWARE/AltoroJ" }
     ]
   },
   {
-    "id": "crapi",
-    "name": "crAPI",
-    "category": "API",
-    "difficulty": "Intermediate",
-    "description": "Completely Ridiculous API, OWASP's API security training app. Covers BOLA, mass assignment, broken function-level auth, and the OWASP API Top 10.",
-    "image": "owasp/crapi",
-    "imageSize": "~600 MB",
+    "id": "mutillidae",
+    "name": "OWASP Mutillidae II",
+    "category": "Web",
+    "difficulty": "Beginner – Advanced",
+    "description": "Over 40 vulnerabilities across 100+ hands-on exercises. OWASP's training app covering the full OWASP Top 10, HTML injection, LDAP injection, clickjacking, and more.",
+    "image": "webpwnized/mutillidae",
+    "imageSize": "~210 MB",
     "networkMode": "bridge",
-    "ports": [{ "host": 8888, "container": 8888 }],
-    "url": "http://localhost:8888",
-    "tags": ["OWASP API Top 10", "BOLA", "BFLA", "Mass Assignment", "REST"],
+    "ports": [{ "host": 8084, "container": 80 }],
+    "url": "http://localhost:8084",
+    "tags": ["OWASP Top 10", "SQLi", "XSS", "LDAP", "Clickjacking", "HTML Injection"],
     "resources": [
-      { "label": "crAPI GitHub", "url": "https://github.com/OWASP/crAPI" }
+      { "label": "Mutillidae GitHub", "url": "https://github.com/webpwnized/mutillidae" }
     ]
   },
   {
@@ -133,7 +133,7 @@
     "name": "VAmPI",
     "category": "API",
     "difficulty": "Beginner – Intermediate",
-    "description": "Vulnerable REST API built with Flask and OpenAPI. Practice SQLi, user enumeration, mass assignment, and excessive data exposure.",
+    "description": "Vulnerable REST API built with Flask and OpenAPI. Practice SQLi, user enumeration, mass assignment, and excessive data exposure. The root URL returns a JSON welcome message — this is normal. Use with Postman, curl, or Burp Suite.",
     "image": "erev0s/vampi",
     "imageSize": "~120 MB",
     "networkMode": "bridge",
@@ -145,58 +145,21 @@
     ]
   },
   {
-    "id": "pixi",
-    "name": "Pixi",
-    "category": "API",
-    "difficulty": "Beginner",
-    "description": "42Crunch's intentionally vulnerable API. Good beginner target for API authentication bypass, BOLA, and information leakage.",
-    "image": "42crunch/pixi",
-    "imageSize": "~180 MB",
-    "networkMode": "bridge",
-    "ports": [{ "host": 8090, "container": 8090 }],
-    "url": "http://localhost:8090",
-    "tags": ["API Auth", "BOLA", "Info Leakage", "42Crunch"],
-    "resources": [
-      { "label": "Pixi GitHub", "url": "https://github.com/42Crunch/pi-ama" }
-    ]
-  },
-  {
     "id": "metasploitable2",
     "name": "Metasploitable 2",
     "category": "Lab Environment",
     "difficulty": "Beginner – Intermediate",
-    "description": "The classic vulnerable Linux target. Over 20 exploitable services including FTP, SSH, Telnet, SMB, HTTP, and MySQL. Pair it with the Attack Box.",
+    "description": "The classic vulnerable Linux target. In the Docker version, services run on non-standard ports: FTP on 2121, HTTP on 80, SMB on 139/445, MySQL on 3306. Use your host tools (nmap, msfconsole, etc.) to attack it.",
     "image": "tleemcjr/metasploitable2",
     "imageSize": "~1.2 GB",
     "networkMode": "isolated",
     "network": "cyberlab-net",
     "ports": [],
     "url": null,
-    "tags": ["FTP", "SSH", "Telnet", "SMB", "MySQL", "Metasploit", "Multi-service"],
-    "pairedWith": "attackbox",
+    "tags": ["FTP", "SMB", "HTTP", "MySQL", "PostgreSQL", "Metasploit", "Multi-service"],
     "resources": [
       { "label": "Rapid7 Guide", "url": "https://docs.rapid7.com/metasploit/metasploitable-2/" },
       { "label": "Exploit Reference", "url": "https://www.vulnhub.com/entry/metasploitable-2,29/" }
-    ]
-  },
-  {
-    "id": "attackbox",
-    "name": "Attack Box",
-    "category": "Lab Environment",
-    "difficulty": "Tool",
-    "description": "Lightweight Kali-based attack container with nmap, Metasploit, sqlmap, hydra, nikto, gobuster, and a browser terminal. Ready to go against Metasploitable 2.",
-    "image": "byob-attackbox",
-    "imageSize": "~900 MB",
-    "buildLocal": true,
-    "networkMode": "isolated",
-    "network": "cyberlab-net",
-    "ports": [{ "host": 7681, "container": 7681 }],
-    "url": "http://localhost:7681",
-    "tags": ["nmap", "Metasploit", "sqlmap", "hydra", "nikto", "gobuster", "Terminal"],
-    "pairedWith": "metasploitable2",
-    "resources": [
-      { "label": "Metasploit Unleashed", "url": "https://www.offensive-security.com/metasploit-unleashed/" },
-      { "label": "nmap Reference", "url": "https://nmap.org/book/man.html" }
     ]
   }
 ]

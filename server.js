@@ -128,17 +128,6 @@ app.post('/api/labs/:id/start', async (req, res) => {
 
     if (lab.networkMode === 'isolated') {
       args.push('--network', NETWORK_NAME)
-
-      // Attack box: inject the metasploitable IP so `target` resolves inside the container
-      if (lab.id === 'attackbox') {
-        const metaContainerName = 'byob-metasploitable2'
-        const targetIP = await getContainerIP(metaContainerName, NETWORK_NAME)
-        if (targetIP) {
-          args.push('--add-host', `target:${targetIP}`)
-        }
-        // ttyd terminal on localhost
-        args.push('-p', `127.0.0.1:7681:7681`)
-      }
     } else {
       // Map ports to localhost only — never expose on the LAN
       for (const port of (lab.ports || [])) {
@@ -146,9 +135,7 @@ app.post('/api/labs/:id/start', async (req, res) => {
       }
     }
 
-    // Use a pre-built local image tag for the attackbox
-    const image = lab.id === 'attackbox' ? 'byob-attackbox:latest' : lab.image
-    args.push(image)
+    args.push(lab.image)
 
     await execa('docker', args)
     res.json({ success: true })
@@ -199,28 +186,6 @@ app.get('/api/labs/:id/pull-progress', async (req, res) => {
   const send = data => res.write(`data: ${JSON.stringify(data)}\n\n`)
 
   try {
-    // For attackbox, build the local image instead of pulling
-    if (lab.id === 'attackbox') {
-      const dockerfilePath = join(__dirname, 'containers', 'attackbox')
-      const build = execa('docker', ['build', '-t', 'byob-attackbox:latest', dockerfilePath])
-
-      build.stdout.on('data', chunk => {
-        for (const line of chunk.toString().split('\n').filter(Boolean)) {
-          send({ line })
-        }
-      })
-      build.stderr.on('data', chunk => {
-        for (const line of chunk.toString().split('\n').filter(Boolean)) {
-          send({ line })
-        }
-      })
-
-      await build
-      send({ done: true })
-      res.end()
-      return
-    }
-
     const pull = execa('docker', ['pull', lab.image])
 
     pull.stdout.on('data', chunk => {

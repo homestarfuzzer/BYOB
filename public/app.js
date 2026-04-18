@@ -144,6 +144,10 @@ function sortedLabs(labList) {
       const sb = parseFloat((b.imageSize || '0').replace(/[^0-9.]/g, '')) || 0
       return sa - sb
     }
+    if (currentSort === 'active') {
+      const score = s => s === 'running' ? 0 : s === 'pulling' ? 1 : 2
+      return score(a.status) - score(b.status) || a.name.localeCompare(b.name)
+    }
     return 0
   })
 }
@@ -168,18 +172,7 @@ function renderDashboard() {
     const meta = categoryMeta[cat]
     const sorted = sortedLabs(catLabs)
 
-    // Lab Environment category: split labs vs tools (attackbox is a tool)
-    let countLabel
-    if (cat === 'Lab Environment') {
-      const labCount = catLabs.filter(l => l.id !== 'attackbox').length
-      const toolCount = catLabs.filter(l => l.id === 'attackbox').length
-      const parts = []
-      if (labCount) parts.push(`${labCount} Lab${labCount > 1 ? 's' : ''}`)
-      if (toolCount) parts.push(`${toolCount} Tool${toolCount > 1 ? 's' : ''}`)
-      countLabel = parts.join(' · ')
-    } else {
-      countLabel = `${catLabs.length} Lab${catLabs.length > 1 ? 's' : ''}`
-    }
+    const countLabel = `${catLabs.length} Lab${catLabs.length > 1 ? 's' : ''}`
 
     // Slug for DOM IDs (handles spaces in category names)
     const catId = cat.toLowerCase().replace(/\s+/g, '-')
@@ -246,7 +239,7 @@ function renderLabCard(lab, meta) {
       </div>
     `
   } else if (isRunning) {
-    if (lab.networkMode === 'isolated' && lab.id !== 'attackbox') {
+    if (lab.networkMode === 'isolated') {
       controls = renderNetworkControls(lab)
     } else if (lab.url) {
       controls = `
@@ -262,34 +255,14 @@ function renderLabCard(lab, meta) {
           <div class="lab-card__hint">Container removed on stop · image stays cached</div>
         </div>
       `
-    } else {
-      controls = `
-        <div class="lab-card__running-info">
-          <div class="lab-card__url-row">
-            <a href="http://localhost:7681" target="_blank" rel="noopener" class="btn btn--link">
-              ↗ Open Terminal
-            </a>
-            <button class="btn btn--stop" onclick="stopLab('${lab.id}')">■ Stop</button>
-          </div>
-          <div class="lab-card__hint">Browser terminal · type <code style="font-size:0.7rem;color:var(--green)">nmap target</code> to start</div>
-        </div>
-      `
     }
   } else {
-    const isAttackBox = lab.id === 'attackbox'
-    const metaPartner = labs.find(l => l.id === lab.pairedWith)
-    const partnerRunning = metaPartner?.status === 'running'
-    const startDisabled = isAttackBox && !partnerRunning
-    const startTitle = startDisabled ? 'Start Metasploitable 2 first' : ''
-
     controls = `
       <button
-        class="btn btn--start${startDisabled ? ' btn--disabled' : ''}"
+        class="btn btn--start"
         onclick="startLab('${lab.id}')"
-        ${startDisabled ? 'disabled' : ''}
-        title="${startTitle}"
       >
-        ▶ ${lab.buildLocal && !lab.cached ? 'Build & Start' : 'Start'}
+        ▶ Start
       </button>
     `
   }
@@ -328,8 +301,6 @@ function renderLabCard(lab, meta) {
 
 function renderNetworkControls(lab) {
   const ip = lab.ip
-  const attackBox = labs.find(l => l.id === 'attackbox')
-  const attackRunning = attackBox?.status === 'running'
 
   return `
     <div class="lab-card__ip-block">
@@ -346,15 +317,8 @@ function renderNetworkControls(lab) {
       </div>
       <div class="lab-card__network-badge">🔒 Isolated · safe from your LAN</div>
     </div>
-    <div class="lab-card__controls" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+    <div class="lab-card__controls">
       <button class="btn btn--stop" onclick="stopLab('${lab.id}')">■ Stop</button>
-      ${!attackRunning ? `
-        <button class="btn btn--attack" onclick="startLab('attackbox')">
-          ⚔ Launch Attack Box
-        </button>
-      ` : `
-        <button class="btn btn--stop" onclick="stopLab('attackbox')">■ Stop Attack Box</button>
-      `}
     </div>
     <div class="lab-card__hint">Container removed on stop · image stays cached</div>
   `
@@ -380,7 +344,6 @@ async function startLab(id) {
       toast(`${lab.name} started`, 'success')
       await loadLabs()
       if (lab.url) setTimeout(() => window.open(lab.url, '_blank'), 1500)
-      else if (id === 'attackbox') setTimeout(() => window.open('http://localhost:7681', '_blank'), 2000)
     }
   } catch {
     toast('Could not start lab — is Docker running?', 'error')
@@ -429,7 +392,7 @@ function pullImage(lab) {
       if (data.done) {
         source.close()
         delete pullingSources[lab.id]
-        document.getElementById('pullModal').hidden = false
+        document.getElementById('pullModal').hidden = true
         lab.cached = true
         resolve()
       }
@@ -450,6 +413,11 @@ function pullImage(lab) {
       resolve()
     }
   })
+}
+
+// ── Dismiss Pull Modal ────────────────────────────────────────────────────
+function dismissPullModal() {
+  document.getElementById('pullModal').hidden = true
 }
 
 // ── Copy IP ───────────────────────────────────────────────────────────────
