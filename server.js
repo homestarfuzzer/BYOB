@@ -49,7 +49,7 @@ async function getLocalImages() {
 // Gets a container's IP on a specific Docker network
 async function getContainerIP(containerName, network) {
   try {
-    const fmt = `{{.NetworkSettings.Networks.${network}.IPAddress}}`
+    const fmt = `{{(index .NetworkSettings.Networks "${network}").IPAddress}}`
     const { stdout } = await execa('docker', ['inspect', containerName, '--format', fmt])
     return stdout.trim() || null
   } catch {
@@ -238,7 +238,8 @@ app.get('/api/labs/:id/pull-progress', async (req, res) => {
     send({ done: true })
     res.end()
   } catch (err) {
-    send({ error: 'Pull failed — check your internet connection and try again.' })
+    const detail = String(err.stderr || err.message || '').trim()
+    send({ error: detail || 'Pull failed — check your internet connection and try again.' })
     res.end()
   }
 })

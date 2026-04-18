@@ -1,6 +1,6 @@
-# BYOB: Break Your Own Boxes 🧱⛏️
+# BYOB: Break Your Own Boxes
 
-#### ***A one-click vulnerable lab launcher. No CLI required. No accounts. No cloud. Just hacking.***
+#### *A one-click vulnerable lab launcher. No CLI required. No accounts. No cloud. Just hacking.*
 
 ---
 
@@ -13,9 +13,9 @@
 
 ## What is BYOB?
 
-BYOB is a locally hosted dashboard that lets you spin up intentionally vulnerable apps with a single click. Everything a beginner needs to practice web hacking, API security, network pentesting, and CTF skills. All in one place, running locally, completely free!
+BYOB is a locally hosted dashboard that lets you spin up intentionally vulnerable apps with a single click. Everything a beginner needs to practice web hacking, API security, and network pentesting — all in one place, running locally, completely free.
 
-**Session model:** Start a lab → hack it → stop it (container vanishes, image cached for fast relaunch) → NUKE when done (everything wiped, nothing left behind).
+**Session model:** Start a lab → hack it → stop it (container removed, image cached for fast relaunch) → NUKE when done (everything wiped, nothing left behind).
 
 ---
 
@@ -27,7 +27,7 @@ BYOB is a locally hosted dashboard that lets you spin up intentionally vulnerabl
 | **Docker** | Latest | [docker.com](https://www.docker.com/products/docker-desktop/) |
 | **WSL2** | — | Windows only |
 
-If Docker isn't installed, BYOB will detect it and show you the right install steps for your OS.
+If Docker is not installed, BYOB will detect it and show you the right install steps for your OS.
 
 ---
 
@@ -45,7 +45,7 @@ Open **http://localhost:1337** in your browser. That's it.
 
 ---
 
-## What's included
+## What's Included
 
 ### Web Application Labs
 | Lab | Skills | Size |
@@ -65,18 +65,13 @@ Open **http://localhost:1337** in your browser. That's it.
 | VAmPI | REST API, Mass Assignment, OpenAPI | ~120 MB |
 | Pixi | API Auth bypass, BOLA | ~180 MB |
 
-### Network / System Labs
+### Lab Environment
 | Lab | Skills | Size |
 |-----|--------|------|
 | Metasploitable 2 | Multi-service exploitation, Metasploit | ~1.2 GB |
-| Attack Box | Pre-built attack toolkit (see below) | ~900 MB |
+| Attack Box | Pre-built Kali attack toolkit (see below) | ~900 MB |
 
-### CTF Infrastructure
-| Lab | Skills | Size |
-|-----|--------|------|
-| CTFd | Host or practice CTF challenges | ~200 MB |
-
-> **Disk note:** Running everything at once = ~5–6 GB. Images are downloaded once and cached.
+> **Disk note:** Running everything at once is roughly 5 GB. Images are downloaded once and cached.
 > NUKE wipes all images and frees that space instantly.
 
 ---
@@ -85,7 +80,7 @@ Open **http://localhost:1337** in your browser. That's it.
 
 These two labs work together on an **isolated Docker network** (`cyberlab-net`):
 
-- **Metasploitable 2** — the target. ~20 exploitable services (FTP, SSH, Telnet, HTTP, MySQL, and more).
+- **Metasploitable 2** — the target. Over 20 exploitable services (FTP, SSH, Telnet, HTTP, MySQL, and more).
 - **Attack Box** — a lightweight Kali container (~900 MB) with: `nmap`, `metasploit`, `sqlmap`, `hydra`, `nikto`, `gobuster`, and a browser-based terminal.
 
 Start Metasploitable 2 → dashboard shows the target IP → click **Launch Attack Box** → browser terminal opens → type `nmap target` and go.
@@ -117,11 +112,11 @@ Edit `labs/labs.json`. No code changes needed.
 }
 ```
 
-Restart BYOB & your lab appears in the dashboard.
+Restart BYOB and your lab appears in the dashboard.
 
 ---
 
-## How it works
+## How It Works
 
 ```
 Browser  ────→ Vanilla HTML/CSS/JS (no framework)
@@ -137,7 +132,7 @@ Docker Engine
    └── Net labs  → cyberlab-net (isolated bridge, 172.20.0.0/24)
 ```
 
-No database. State is derived live from `docker ps`. Container logs don't persist. When you stop a lab, the container is gone.
+No database. State is derived live from `docker ps`. Container logs do not persist. When you stop a lab, the container is gone.
 
 ---
 
@@ -145,7 +140,7 @@ No database. State is derived live from `docker ps`. Container logs don't persis
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-Adding a new lab is the easiest contribution, it's just a `labs.json` entry and a PR.
+Adding a new lab is the easiest contribution — it's just a `labs.json` entry and a PR.
 
 ---
 

@@ -37,14 +37,14 @@ async function checkDocker() {
     if (data.ok) {
       statusEl.innerHTML = `
         <span class="status-dot status-dot--ok"></span>
-        <span>Docker running</span>
+        <span>DOCKER OPERATIONAL</span>
       `
       hideSetupScreen()
       startPolling()
     } else {
       statusEl.innerHTML = `
         <span class="status-dot status-dot--error"></span>
-        <span>${data.installed ? 'Docker not running' : 'Docker not installed'}</span>
+        <span>${data.installed ? 'DOCKER OFFLINE' : 'DOCKER NOT FOUND'}</span>
       `
       showSetupScreen(data)
     }
@@ -152,12 +152,11 @@ function sortedLabs(labList) {
 function renderDashboard() {
   const grid = document.getElementById('labsGrid')
 
-  const categories = ['Web', 'API', 'Network', 'CTF']
+  const categories = ['Web', 'API', 'Lab Environment']
   const categoryMeta = {
-    Web:     { emoji: '🌐', badgeClass: 'badge--web' },
-    API:     { emoji: '⚡', badgeClass: 'badge--api' },
-    Network: { emoji: '🔗', badgeClass: 'badge--network' },
-    CTF:     { emoji: '🚩', badgeClass: 'badge--ctf' }
+    Web:               { emoji: '🌐', label: 'Web Application Labs', badgeClass: 'badge--web', badgeLabel: 'Web' },
+    API:               { emoji: '⚡', label: 'API Security Labs',     badgeClass: 'badge--api', badgeLabel: 'API' },
+    'Lab Environment': { emoji: '⚙', label: 'Lab Environment',       badgeClass: 'badge--lab', badgeLabel: 'Lab' }
   }
 
   let html = ''
@@ -169,9 +168,9 @@ function renderDashboard() {
     const meta = categoryMeta[cat]
     const sorted = sortedLabs(catLabs)
 
-    // Network category: split labs vs tools (attackbox is a tool, not a lab)
+    // Lab Environment category: split labs vs tools (attackbox is a tool)
     let countLabel
-    if (cat === 'Network') {
+    if (cat === 'Lab Environment') {
       const labCount = catLabs.filter(l => l.id !== 'attackbox').length
       const toolCount = catLabs.filter(l => l.id === 'attackbox').length
       const parts = []
@@ -182,19 +181,20 @@ function renderDashboard() {
       countLabel = `${catLabs.length} Lab${catLabs.length > 1 ? 's' : ''}`
     }
 
-    // Check if this section is collapsed
-    const isCollapsed = localStorage.getItem(`byob-collapsed-${cat}`) === 'true'
+    // Slug for DOM IDs (handles spaces in category names)
+    const catId = cat.toLowerCase().replace(/\s+/g, '-')
+    const isCollapsed = localStorage.getItem(`byob-collapsed-${catId}`) === 'true'
 
     html += `
-      <section class="category-section" id="section-${cat}">
-        <div class="category-section__header" onclick="toggleSection('${cat}')">
+      <section class="category-section" id="section-${catId}">
+        <div class="category-section__header" onclick="toggleSection('${catId}')">
           <span style="font-size:1rem">${meta.emoji}</span>
-          <h2 class="category-section__title">${cat}</h2>
+          <h2 class="category-section__title">${meta.label}</h2>
           <div class="category-section__line"></div>
           <span class="category-section__count">${countLabel}</span>
           <span class="category-section__chevron ${isCollapsed ? 'category-section__chevron--collapsed' : ''}">▾</span>
         </div>
-        <div class="category-section__grid ${isCollapsed ? 'category-section__grid--collapsed' : ''}" id="grid-${cat}">
+        <div class="category-section__grid ${isCollapsed ? 'category-section__grid--collapsed' : ''}" id="grid-${catId}">
           ${sorted.map(lab => renderLabCard(lab, meta)).join('')}
         </div>
       </section>
@@ -205,12 +205,12 @@ function renderDashboard() {
 }
 
 // ── Collapsible sections ─────────────────────────────────────────────────
-function toggleSection(cat) {
-  const grid = document.getElementById(`grid-${cat}`)
-  const chevron = document.querySelector(`#section-${cat} .category-section__chevron`)
+function toggleSection(catId) {
+  const grid = document.getElementById(`grid-${catId}`)
+  const chevron = document.querySelector(`#section-${catId} .category-section__chevron`)
   const isCollapsed = grid.classList.toggle('category-section__grid--collapsed')
   chevron.classList.toggle('category-section__chevron--collapsed', isCollapsed)
-  localStorage.setItem(`byob-collapsed-${cat}`, isCollapsed)
+  localStorage.setItem(`byob-collapsed-${catId}`, isCollapsed)
 }
 
 // ── Lab Card ─────────────────────────────────────────────────────────────
@@ -223,9 +223,9 @@ function renderLabCard(lab, meta) {
   else if (isPulling) cardClass += ' lab-card--pulling'
 
   let statusDot, statusText
-  if (isPulling)       { statusDot = 'pulling'; statusText = 'Pulling image...' }
-  else if (isRunning)  { statusDot = 'running'; statusText = 'Running' }
-  else                 { statusDot = 'stopped'; statusText = 'Stopped' }
+  if (isPulling)       { statusDot = 'pulling'; statusText = '◈ LOADING' }
+  else if (isRunning)  { statusDot = 'running'; statusText = '◉ OPERATIONAL' }
+  else                 { statusDot = 'stopped'; statusText = '◎ STANDBY' }
 
   const sizeMeta = `
     <div class="lab-card__meta">
@@ -307,7 +307,7 @@ function renderLabCard(lab, meta) {
       <div class="lab-card__header">
         <div class="lab-card__name">${lab.name}</div>
         <div class="lab-card__badges">
-          <span class="badge ${meta.badgeClass}">${lab.category}</span>
+          <span class="badge ${meta.badgeClass}">${meta.badgeLabel}</span>
           <span class="badge badge--difficulty">${lab.difficulty}</span>
         </div>
       </div>
